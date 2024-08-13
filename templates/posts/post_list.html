@@ -5,13 +5,15 @@
 {% block content %}
 <section class="section">
     <div class="container">
-        {% if category %}
-            <h2 class="title has-text-centered" style="font-weight: bold;">Посты в категории "{{ category.name }}"</h2>
-        {% else %}
-            <h2 class="title has-text-centered" style="font-weight: bold;">Все посты</h2>
-        {% endif %}
+        <h2 class="title has-text-centered" style="font-weight: bold;">
+            {% if category %}
+                Посты в категории "{{ category.title }}"
+            {% else %}
+                Все посты
+            {% endif %}
+        </h2>
 
-        {% if not user.is_authenticated %}
+        {% if not is_authenticated %}
             <div class="notification is-info has-text-centered" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                 Если хотите видеть содержание постов, <a href="{% url 'accounts:login' %}" class="has-text-weight-bold">Войдите в систему</a>.
             </div>
@@ -19,14 +21,12 @@
 
         <div class="field is-grouped">
             <p class="control">
-                <a href="{% url 'posts:list' %}" class="button {% if not category %}is-primary{% endif %}">
-                    Все категории
-                </a>
+                <a href="{% url 'posts:list' %}" class="button {% if not category %}is-primary{% endif %}">Все категории</a>
             </p>
             {% for cat in categories %}
                 <p class="control">
                     <a href="{% url 'posts:category' cat.id %}" class="button {% if category and category.id == cat.id %}is-primary{% else %}is-light{% endif %}">
-                        {{ cat.name }}
+                        {{ cat.title }}
                     </a>
                 </p>
             {% endfor %}
@@ -34,14 +34,10 @@
 
         <div class="field is-grouped">
             <p class="control">
-                <a href="{% url 'posts:list' %}?sort_by=date" class="button {% if sort_by == 'date' %}is-primary{% else %}is-light{% endif %}">
-                    Сортировать по дате
-                </a>
+                <a href="{% url 'posts:list' %}?sort_by=date" class="button {% if sort_by == 'date' %}is-primary{% else %}is-light{% endif %}">Сортировать по дате</a>
             </p>
             <p class="control">
-                <a href="{% url 'posts:list' %}?sort_by=category" class="button {% if sort_by == 'category' %}is-primary{% else %}is-light{% endif %}">
-                    Сортировать по категории
-                </a>
+                <a href="{% url 'posts:list' %}?sort_by=category" class="button {% if sort_by == 'category' %}is-primary{% else %}is-light{% endif %}">Сортировать по категории</a>
             </p>
         </div>
 
@@ -60,7 +56,7 @@
                                 <div class="post-meta" style="color: #adb5bd; font-size: 0.875rem; margin-top: 0.5rem;">
                                     <span class="post-author">Автор: {{ post.author.username }}</span>
                                     <span class="post-date">Дата: {{ post.created_at|date:"d.m.Y" }}</span>
-                                    <span class="post-category">Категория: <a href="{% url 'posts:category' post.category.id %}" style="color: inherit;">{{ post.category.name }}</a></span>
+                                    <span class="post-category">Категория: <a href="{% url 'posts:category' post.category.id %}" style="color: inherit;">{{ post.category.title }}</a></span>
                                 </div>
                             </a>
                         </div>
@@ -70,7 +66,8 @@
         {% endif %}
     </div>
 </section>
-{% if request.user.is_superuser %}
-                    <a href="{% url 'posts:create_post' %}" class="button is-primary">Создать пост</a>
+
+{% if is_superuser %}
+    <a href="{% url 'posts:create_post' %}" class="button is-primary">Создать пост</a>
 {% endif %}
 {% endblock %}

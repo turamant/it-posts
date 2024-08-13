@@ -15,19 +15,36 @@ from django.shortcuts import render, get_object_or_404
 from .models import Post, Category
 
 
-
 def view_post_list(request, id=None):
     sort_by = request.GET.get('sort_by', 'date')
     category = None
 
+    # Получаем категории
+    categories = Category.objects.all()
+
+    # Фильтрация по категории
     if id:
         category = get_object_or_404(Category, id=id)
-        posts = Post.objects.filter(category=category).order_by('-created_at')
+        posts = Post.objects.filter(category=category)
     else:
-        posts = Post.objects.order_by('-created_at')
+        posts = Post.objects.all()
 
-    categories = Category.objects.all()
-    return render(request, 'posts/post_list.html', {'posts': posts, 'categories': categories, 'sort_by': sort_by, 'category': category})
+    # Сортировка постов
+    if sort_by == 'date':
+        posts = posts.order_by('-created_at')
+    elif sort_by == 'category':
+        posts = posts.order_by('category__title')
+
+    return render(request, 'posts/post_list.html', {
+        'posts': posts,
+        'categories': categories,
+        'sort_by': sort_by,
+        'category': category,
+        'is_authenticated': request.user.is_authenticated,
+        'is_superuser': request.user.is_superuser,
+    })
+
+
 
 @login_required
 def view_post_detail(request, id):
