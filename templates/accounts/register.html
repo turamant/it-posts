@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %} Register account {% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="content">
+            <h2 class="title">Register account</h2>
+            {% if error %}
+            <div class="notification is-danger">
+                {{ error }}
+            </div>
+            {% endif %}
+            <form method='post' class="box">
+                {% csrf_token %}
+                <div class="field">
+                    <label class="label" for='username'>Username:</label>
+                    <div class="control">
+                        <input class="input" type='text' id='username' name='username' required>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label" for='password'>Password:</label>
+                    <div class="control">
+                        <input class="input" type='password' id='password' name='password' required>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-primary" type='submit'>Register</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

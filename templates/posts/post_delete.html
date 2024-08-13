@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Post{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-6">
+                <h2 class="title has-text-centered">Удалить пост</h2>
+                <p class="has-text-centered">Вы уверены, что хотите удалить пост: <strong>{{ post.title }}</strong>?</p>
+                <form method="post" class="mt-5">
+                    {% csrf_token %}
+                    <div class="field is-grouped is-grouped-centered">
+                        <div class="control">
+                            <button class="button is-danger" type="submit">Удалить</button>
+                        </div>
+                        <div class="control">
+                            <a href="javascript:history.back();" class="button is-secondary">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

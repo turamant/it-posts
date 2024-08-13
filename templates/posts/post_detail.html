@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Пост - {{ post.title }}{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-8">
+                <div class="content">
+                    <h1 class="title">{{ post.title }}</h1>
+                    <p class="subtitle">Автор: {{ post.author.username }}</p>
+                    <p class="has-text-grey-light">Создано: {{ post.created_at|date:"d.m.Y H:i" }}</p>
+                    <hr>
+                    <p>{{ post.content }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="columns is-centered">
+            <div class="column is-8">
+                <div class="buttons is-pulled-centered">
+                    {% if request.user.is_superuser %}
+                    <a href="{% url 'posts:update_post' post.id %}" class="button is-primary">Редактировать</a>
+                    <a href="{% url 'posts:delete_post' post.id %}" class="button is-danger">Удалить</a>
+                    {% endif %}
+                    <a href="{% url 'posts:list' %}" class="button is-light">Назад<a>
+                </div>
+            </div>
+        </div>
+    
+    </div>
+</section>
+{% endblock %}
+
+            

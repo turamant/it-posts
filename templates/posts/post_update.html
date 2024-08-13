@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Обновить пост{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-6">
+                <div class="box" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                    <h2 class="title has-text-centered" style="font-weight: bold;">Обновить пост</h2>
+                    <form method="post" class="mt-5">
+                        {% csrf_token %}
+                        <div class="field">
+                            {% for field in form %}
+                            <div class="field" style="margin-bottom: 1.5rem;">
+                                <label class="label" style="font-weight: bold;">{{ field.label }}</label>
+                                <div class="control">
+                                    {% if field.name == 'category' or field.name == 'author' %}
+                                    <div class="select is-medium is-fullwidth">
+                                        {{ field }}
+                                    </div>
+                                    {% elif field.name == 'content' %}
+                                    <textarea name="{{ field.name }}" class="textarea is-medium" required>{{ field.value|default:'' }}</textarea>
+                                    {% else %}
+                                    <input type="{{ field.field.widget.type }}" name="{{ field.name }}" value="{{ field.value|default:'' }}" class="input is-medium" required {% if field.field.required %}required{% endif %}>
+                                    {% endif %}
+                                </div>
+                                {% if field.errors %}
+                                <p class="help is-danger" style="font-weight: bold;">{{ field.errors|join:", " }}</p>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="field is-grouped is-grouped-centered">
+                            <div class="control">
+                                <button class="button is-primary is-medium" type="submit" style="font-weight: bold;">Сохранить изменения</button>
+                            </div>
+                            <div class="control">
+                                <a href="{% url 'posts:list' %}" class="button is-secondary is-medium" style="font-weight: bold;">Отмена</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
