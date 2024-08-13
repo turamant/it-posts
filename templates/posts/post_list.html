@@ -41,14 +41,14 @@
             </p>
         </div>
 
-        {% if not posts %}
+        {% if not page_obj.object_list %}
             <div class="notification is-warning" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                 <p>Постов пока нет.</p>
             </div>
         {% else %}
             <div class="content">
                 <div class="post-list">
-                    {% for post in posts %}
+                    {% for post in page_obj.object_list %}
                         <div class="post-item box" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); margin-bottom: 2rem;">
                             <a href="{% url 'posts:detail' post.id %}" class="post-link" style="display: block; color: inherit; text-decoration: none;">
                                 <h3 class="post-title" style="font-weight: bold; margin-bottom: 0.5rem;">{{ post.title }}</h3>
@@ -66,6 +66,20 @@
         {% endif %}
     </div>
 </section>
+
+<nav class="pagination is-centered" role="navigation" aria-label="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}&sort_by={{ sort_by }}{% if category %}&id={{ category.id }}{% endif %}" class="pagination-previous">Предыдущая</a>
+    {% endif %}
+
+    {% for i in page_obj.paginator.page_range %}
+        <a href="?page={{ i }}&sort_by={{ sort_by }}{% if category %}&id={{ category.id }}{% endif %}" class="pagination-link {% if page_obj.number == i %}is-current{% endif %}">{{ i }}</a>
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}&sort_by={{ sort_by }}{% if category %}&id={{ category.id }}{% endif %}" class="pagination-next">Следующая</a>
+    {% endif %}
+</nav>
 
 {% if is_superuser %}
     <a href="{% url 'posts:create_post' %}" class="button is-primary">Создать пост</a>

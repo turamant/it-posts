@@ -2,7 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from .models import Post, Category
-from django.db.models import Q
+
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .forms import PostForm
 from django.utils import timezone
 from django.contrib.auth.models import User, Group
@@ -10,9 +11,6 @@ from django.contrib.auth.models import User, Group
 
 def is_admin(user):
     return user.is_superuser or user.groups.filter(name='Администраторы').exists()
-
-from django.shortcuts import render, get_object_or_404
-from .models import Post, Category
 
 
 def view_post_list(request, id=None):
@@ -35,15 +33,26 @@ def view_post_list(request, id=None):
     elif sort_by == 'category':
         posts = posts.order_by('category__title')
 
+    # Пагинация
+    paginator = Paginator(posts, 5)  # Показывать 5 постов на странице
+    page_number = request.GET.get('page', 1)  # По умолчанию первая страница, если не указано
+    
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+    print(f'Посты на текущей странице: {page_obj.object_list.count()}')
+    
     return render(request, 'posts/post_list.html', {
-        'posts': posts,
+        'page_obj': page_obj,
         'categories': categories,
         'sort_by': sort_by,
         'category': category,
         'is_authenticated': request.user.is_authenticated,
         'is_superuser': request.user.is_superuser,
     })
-
 
 
 @login_required
